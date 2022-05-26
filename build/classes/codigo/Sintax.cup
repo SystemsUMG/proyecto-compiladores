@@ -1,0 +1,46 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal Paquete, Int, If, Else, While, Igual, Suma, Resta, Multiplicacion,
+    Division, Parentesis_a, Parentesis_c, Llave_a, Llave_c, Main, P_coma, Identificador, ERROR,
+    Importar, Publico, Clase, N_Clase, Estatico, Vacio, Logicos;
+terminal String Numero;
+
+non terminal INICIO, SENTENCIA, DECLARACION, ESTRUCTURAS, CONDICION, IF, IMPORT, PACKAGE, CLASE,
+    METODO;
+
+start with INICIO;
+
+INICIO ::= PACKAGE IMPORT;
+
+PACKAGE ::= Paquete Identificador P_coma;
+
+IMPORT ::= Importar Identificador P_coma;
+
+CLASE ::= Publico Clase N_Clase Llave_a METODO Llave_c;
+
+METODO ::= Publico Estatico Vacio Identificador Parentesis_a Parentesis_c Llave_a ESTRUCTURAS Llave_c;
+
+ESTRUCTURAS ::= IF;
+
+IF ::= If Parentesis_a CONDICION Parentesis_c Llave_a SENTENCIA Llave_c;
+
+CONDICION ::= Identificador Logicos Identificador | Numero Logicos Numero;
+
+SENTENCIA ::= Int Identificador P_coma | Int Identificador Igual Numero P_coma;
