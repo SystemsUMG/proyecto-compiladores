@@ -189,8 +189,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
                         eCaracteres = indicadorLinea.toCharArray();
                         //error += "Simbolo no Definido\t"+ lexer.yytext() +"\n linea: "+ cont+"\n";                                               
                         for (int x = 0; x < eCaracteres.length; x++) {
-                            System.out.println(eCaracteres[x]);
-                            System.out.println(lexer.yytext().charAt(0));
                             if (eCaracteres[x] == lexer.yytext().charAt(0)) {
                             eCaracteres[x]='0';    
                             error += lexer.yytext()+"\t" +cont+"\t"+(x+1)+"\n" ;

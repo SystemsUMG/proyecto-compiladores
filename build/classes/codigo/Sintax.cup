@@ -8,26 +8,47 @@ parser code
     
     public void syntax_error(Symbol s){
         this.s = s;
-        System.out.println("Error Sintáctico en la Línea " + (s.left) +
-        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+".");
+        int row = 0;
+        int column = 0;
+        if(s.left >= 0) {
+            row = s.right+1;
+        } else {
+            row = s.right;
+        }
+        if (s.right >= 0) {
+            column = s.left;
+	} else {
+            column = s.left;
+        }
+        System.out.println("Error Sintáctico en la Línea " + row + " Columna "+ column + ". No se esperaba este componente: " +s.value);
     }
 
     public Symbol getS(){
         return this.s;
-}
+    }
+
+    public int division (int a, int b) {
+        int result = 0;
+        if (b != 0) {
+            result = a/b;
+        }
+        return result;
+    }
 :};
 
 terminal Paquete, Int, If, Else, While, Igual, Suma, Resta, Multiplicacion,
     Division, Parentesis_a, Parentesis_c, Llave_a, Llave_c, Main, P_coma, Identificador, ERROR,
-    Importar, Publico, Clase, N_Clase, Estatico, Vacio, Logicos;
+    Importar, Publico, Clase, N_Clase, Estatico, Vacio, Logicos, Menor, Mayor, MenorIgual, MayorIgual,
+    Comparacion, Distinto, Cadena, D_String, Imprimir, Punto;
 terminal String Numero;
 
 non terminal INICIO, SENTENCIA, DECLARACION, ESTRUCTURAS, CONDICION, IF, IMPORT, PACKAGE, CLASE,
-    METODO;
+    METODO, ESTRUCTURA, OPERADOR, VALOR, TDATO, IFELSE, IMPRIMIR, ELSE, CALCULAR;
+non terminal Integer MONOMIO, OPERACIONES;
 
 start with INICIO;
 
-INICIO ::= PACKAGE IMPORT;
+INICIO ::= PACKAGE IMPORT CLASE;
 
 PACKAGE ::= Paquete Identificador P_coma;
 
@@ -35,12 +56,36 @@ IMPORT ::= Importar Identificador P_coma;
 
 CLASE ::= Publico Clase N_Clase Llave_a METODO Llave_c;
 
-METODO ::= Publico Estatico Vacio Identificador Parentesis_a Parentesis_c Llave_a ESTRUCTURAS Llave_c;
+METODO ::= Publico Estatico Vacio Main Parentesis_a Parentesis_c Llave_a ESTRUCTURAS Llave_c;
 
-ESTRUCTURAS ::= IF;
+ESTRUCTURAS ::= ESTRUCTURA | ESTRUCTURA ESTRUCTURAS ;
+
+ESTRUCTURA ::= IF | IFELSE | SENTENCIA | IMPRIMIR ;
+
+IFELSE ::= IF ELSE;
 
 IF ::= If Parentesis_a CONDICION Parentesis_c Llave_a SENTENCIA Llave_c;
 
-CONDICION ::= Identificador Logicos Identificador | Numero Logicos Numero;
+ELSE ::= Else Llave_a SENTENCIA Llave_c;
 
-SENTENCIA ::= Int Identificador P_coma | Int Identificador Igual Numero P_coma;
+CONDICION ::= Identificador OPERADOR Identificador | Numero OPERADOR Numero;
+
+OPERADOR ::= Logicos | Menor | MenorIgual | Mayor | MayorIgual | Comparacion | Distinto;
+
+SENTENCIA ::= TDATO Identificador P_coma | TDATO Identificador Igual VALOR P_coma | OPERACIONES P_coma | CALCULAR;
+
+CALCULAR ::= Identificador:a Igual OPERACIONES:b P_coma {:System.out.println("El valor de la variable "+a+" es: "+b);:} |
+            TDATO Identificador:a Igual OPERACIONES:b P_coma {:System.out.println("El valor de la variable "+a+" es: "+b);:};
+
+VALOR ::= Numero | Cadena;
+
+TDATO ::= Int | D_String;
+
+IMPRIMIR ::= Imprimir Parentesis_a Cadena Parentesis_c P_coma;
+
+OPERACIONES ::= MONOMIO:a Suma MONOMIO:b {:RESULT=(a+b);:} |
+              MONOMIO:a Resta MONOMIO:b {:RESULT=(a-b);:} |
+              MONOMIO:a Multiplicacion MONOMIO:b {:RESULT=(a*b);:} |
+              MONOMIO:a Division MONOMIO:b {:RESULT=parser.division(a,b);:};
+
+MONOMIO ::= Numero:a {:RESULT=new Integer(a);:} ;

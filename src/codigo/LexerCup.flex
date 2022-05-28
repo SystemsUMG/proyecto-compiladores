@@ -24,7 +24,7 @@ imprimirSinSalto = "System.out.print"
 imprimirConSalto = "System.out.println"
 punto = "."
 mas = "+"
-espacio=[ ,\t,\r]+
+espacio=[ ,\t,\r,\n]+
 %{
     private Symbol symbol(int type, Object value) {
         return new Symbol(type, yyline, yycolumn, value);
@@ -47,7 +47,6 @@ for {return new Symbol(sym.For, yychar, yyline, yytext());}
 
 {espacio} {/*Ignore*/}
 "//".* {/*Ignore*/}
-"\n" {return new Symbol(sym.Linea, yychar, yyline, yytext());}
 {igual} {return new Symbol(sym.Igual, yychar, yyline, yytext());}
 {menor} {return new Symbol(sym.Menor, yychar, yyline, yytext());}
 {mayor} {return new Symbol(sym.Mayor, yychar, yyline, yytext());}
